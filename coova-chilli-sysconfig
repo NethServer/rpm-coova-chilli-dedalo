@@ -1,0 +1,3 @@
+# Command line options here
+# CHILLIARGS="--debug --debugfacility=1"
+CHILLIARGS=""

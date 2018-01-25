@@ -1,0 +1,13 @@
+--- coova-chilli/conf/up.sh.in.orig	2015-09-06 08:58:07.639151097 +0200
++++ coova-chilli/conf/up.sh.in	2015-09-06 09:02:57.798804904 +0200
+@@ -87,6 +87,10 @@
+ 
+     # site specific stuff optional
+     [ -e @ETCCHILLI@/ipup.sh ] && . @ETCCHILLI@/ipup.sh
++
++	# Change by Lux. TODO: see if MASQUERADE is still necessary, or put it into chilli.iptables script?
++    [ -e "@VARRUN@/chilli.iptables" ] && sh @VARRUN@/chilli.iptables 2>/dev/null
++    iptables -I POSTROUTING -t nat -o $HS_WANIF -j MASQUERADE
+ }
+ 
+ 

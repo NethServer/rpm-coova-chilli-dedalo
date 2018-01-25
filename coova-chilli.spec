@@ -4,16 +4,14 @@ Version:   1.4
 Release:   1%{?dist}
 URL:       http://coova.github.io/
 Source0:   https://github.com/Amygos/coova-chilli/archive/alloworigin.tar.gz
-Source111: coova-chilli-sysconfig
-Patch200:  coova-chilli-libjson.lux.patch
 License:   GPL
 Group:     System Environment/Daemons
 
 # Needed for sh bootstrap, build phase
-BuildRequires: autoconf automake libtool libcurl-devel c-ares-devel
+BuildRequires: autoconf automake libtool libcurl-devel c-ares-devel gengetopt gcc-c++
 
 %if %{!?_without_ssl:1}0
-BuildRequires: openssl-devel libtool gengetopt gcc-c++
+BuildRequires: openssl-devel
 %endif
 
 # Require haserl since the internal captive portal uses it, like all other CPs for chilli I'm aware of at the moment.
@@ -36,7 +34,6 @@ your favorite radius server. Read more at http://coova.github.io/.
 
 %prep
 %setup -n coova-chilli-alloworigin
-%patch200 -p1
 
 %build
 sh bootstrap
@@ -77,9 +74,8 @@ cp -p %{buildroot}%{_sysconfdir}/chilli/defaults %{buildroot}%{_sysconfdir}/chil
 # throw away the initial comments telling to copy the defaults to config
 perl -ni -e '1 .. /^\s*$/ and /^#/ or print' %{buildroot}%{_sysconfdir}/chilli/config
 perl -ni -e '1 ... /^\S/ and /^\s*$/ or print' %{buildroot}%{_sysconfdir}/chilli/config
-
-mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
-cp %{SOURCE111} %{buildroot}%{_sysconfdir}/sysconfig/chilli
+# Remove unused init scripts
+rm -rf  %{buildroot}/etc/init.d/
 
 %check
 rm -f %{buildroot}%{_libdir}/python/*.pyc
@@ -98,7 +94,6 @@ make clean
 %{_sbindir}/*
 %{_libdir}/*.so*
 %{_libdir}/python/CoovaChilliLib.py
-%{_sysconfdir}/init.d/chilli
 %doc AUTHORS COPYING ChangeLog INSTALL README doc/dictionary.coovachilli doc/hotspotlogin.cgi
 %doc doc/fmttxt.pl doc/attributes doc/chilli.conf doc/firewall.* doc/freeradius.users doc/hotspotlogin* doc/*.php
 %config %{_sysconfdir}/chilli.conf
@@ -107,10 +102,9 @@ make clean
 %config(noreplace) %{_sysconfdir}/chilli/config
 %dir %{_sysconfdir}/chilli
 %dir %{_sysconfdir}/chilli/www
-%config(noreplace) %attr(755,root,root)%{_sysconfdir}/chilli/www/config.sh
-%config(noreplace) %{_sysconfdir}/sysconfig/chilli
 %attr(4750,root,root)%{_sbindir}/chilli_script
 %config(noreplace) %{_sysconfdir}/chilli/www/*
+%config(noreplace) %attr(755,root,root)%{_sysconfdir}/chilli/www/config.sh
 %{_sysconfdir}/chilli/wwwsh
 %config(noreplace) %{_sysconfdir}/chilli/functions
 %config(noreplace) %{_sysconfdir}/chilli/*.sh

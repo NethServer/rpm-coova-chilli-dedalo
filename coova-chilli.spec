@@ -1,5 +1,3 @@
-%define gitver .git20170629
-
 Summary:   Coova-Chilli is a Wireless LAN Access Point Controller
 Name:      coova-chilli
 Version:   1.4
@@ -7,9 +5,6 @@ Release:   1%{?dist}
 URL:       http://coova.github.io/
 Source0:   %{name}-%{version}.tar.gz
 Source111: coova-chilli-sysconfig
-Source112: coova-chilli-ipup.sh
-# Don't use it any more, use the ipup.sh script
-Patch101:  coova-chilli-up.patch
 Patch200:  coova-chilli-libjson.lux.patch
 License:   GPL
 Group:     System Environment/Daemons
@@ -41,7 +36,6 @@ your favorite radius server. Read more at http://coova.github.io/.
 
 %prep
 %setup
-#%patch101 -p1
 %patch200 -p1
 
 %build
@@ -72,39 +66,32 @@ sh bootstrap
 make
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
 
-rm -rf $RPM_BUILD_ROOT%{_prefix}/include/*
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
-#cp -f chilli $RPM_BUILD_ROOT%{_sysconfdir}/init.d/chilli
+rm -rf %{buildroot}%{_prefix}/include/*
+rm -f %{buildroot}%{_libdir}/*.la
+rm -f %{buildroot}%{_libdir}/*.a
 
 # Place a default config file to be edited by the admin
-cp -p $RPM_BUILD_ROOT%{_sysconfdir}/chilli/defaults $RPM_BUILD_ROOT%{_sysconfdir}/chilli/config
+cp -p %{buildroot}%{_sysconfdir}/chilli/defaults %{buildroot}%{_sysconfdir}/chilli/config
 # throw away the initial comments telling to copy the defaults to config
-perl -ni -e '1 .. /^\s*$/ and /^#/ or print' $RPM_BUILD_ROOT%{_sysconfdir}/chilli/config
-perl -ni -e '1 ... /^\S/ and /^\s*$/ or print' $RPM_BUILD_ROOT%{_sysconfdir}/chilli/config
+perl -ni -e '1 .. /^\s*$/ and /^#/ or print' %{buildroot}%{_sysconfdir}/chilli/config
+perl -ni -e '1 ... /^\S/ and /^\s*$/ or print' %{buildroot}%{_sysconfdir}/chilli/config
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-cp %{SOURCE111} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/chilli
-cp %{SOURCE112} $RPM_BUILD_ROOT%{_sysconfdir}/chilli/ipup.sh
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+cp %{SOURCE111} %{buildroot}%{_sysconfdir}/sysconfig/chilli
 
 %check
-rm -f $RPM_BUILD_ROOT%{_libdir}/python/*.pyc
-rm -f $RPM_BUILD_ROOT%{_libdir}/python/*.pyo
+rm -f %{buildroot}%{_libdir}/python/*.pyc
+rm -f %{buildroot}%{_libdir}/python/*.pyo
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 make clean
 
 %post
-/sbin/chkconfig --add chilli
 
 %preun
-if [ $1 = 0 ]; then
-        /sbin/service chilli stop > /dev/null 2>&1
-        /sbin/chkconfig --del chilli
-fi
 
 %files
 %defattr(-,root,root)
@@ -133,31 +120,3 @@ fi
 %{_mandir}/man8/*.8*
 
 %changelog
-* Fri Jun 26 2015 Giovanni Bezicheri <giovanni.bezicheri@nethesis.it>
-* Fix json encoding for radius reply.
-
-* Tue May 13 2015 Giovanni Bezicheri <giovanni.bezicheri@nethesis.it>
-* Add support for json uri.
-
-* Fri Nov 14 2014 Giovanni Bezicheri <giovanni.bezicheri@nethesis.it>
-- Add HS_LANIF_KEEPADDR option in chilli sysconfig.
-
-* Thu Jul 10 2014 Giovanni Bezicheri <giovanni.bezicheri@nethesis.it>
-- 1.3.1 release for NethServer. See ChangeLog.
-
-* Sat Jan 2 2010 <david@coova.com>
-- 1.2.0 release
-* Thu Sep 30 2007 <david@coova.com>
-- 1.0.8 release 
-* Thu Aug 20 2007 <david@coova.com>
-- 1.0-coova.7 release
-* Thu Jun 7 2007 <david@coova.com>
-- 1.0-coova.6 release
-* Wed May 16 2007  <david@coova.com>
-- 1.0-coova.5 release
-* Wed Feb 07 2007  <david@coova.com>
-- 1.0-coova.4 release
-* Wed Nov 15 2006  <david@coova.com>
-- 1.0-coova.3 release
-* Thu Mar 25 2004  <support@chillispot.org>
-- Initial release.

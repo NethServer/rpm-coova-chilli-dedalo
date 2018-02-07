@@ -3,7 +3,7 @@ Name:      coova-chilli
 Version:   1.4
 Release:   1%{?dist}
 URL:       http://coova.github.io/
-Source0:   https://github.com/Amygos/coova-chilli/archive/alloworigin.tar.gz
+Source0:   https://github.com/NethServer/coova-chilli/archive/master.tar.gz
 License:   GPL
 Group:     System Environment/Daemons
 
@@ -33,7 +33,7 @@ networks. Authentication, Authorization and Accounting (AAA) is handled by
 your favorite radius server. Read more at http://coova.github.io/.
 
 %prep
-%setup -n coova-chilli-alloworigin
+%setup -n coova-chilli-master
 
 %build
 sh bootstrap

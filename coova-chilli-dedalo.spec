@@ -6,6 +6,7 @@ URL:       http://coova.github.io/
 Source0:   https://github.com/NethServer/coova-chilli/archive/master.tar.gz
 License:   GPL
 Provides:  coova-chilli
+Conflicts: coova-chilli
 
 # Needed for sh bootstrap, build phase
 BuildRequires: autoconf automake libtool libcurl-devel c-ares-devel gengetopt gcc-c++

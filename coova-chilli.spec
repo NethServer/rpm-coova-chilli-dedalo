@@ -1,11 +1,12 @@
 Summary:   Coova-Chilli is a Wireless LAN Access Point Controller
-Name:      coova-chilli
+Name:      coova-chilli-dedalo
 Version:   1.4
 Release:   1%{?dist}
 URL:       http://coova.github.io/
 Source0:   https://github.com/NethServer/coova-chilli/archive/master.tar.gz
 License:   GPL
 Group:     System Environment/Daemons
+Provides:  coova-chilli
 
 # Needed for sh bootstrap, build phase
 BuildRequires: autoconf automake libtool libcurl-devel c-ares-devel gengetopt gcc-c++
